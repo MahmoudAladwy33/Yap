@@ -2,8 +2,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
+import 'package:yap/Views/blocs/auth_bloc/auth_bloc.dart';
 import 'package:yap/Views/chat_page.dart';
-import 'package:yap/Views/cubits/auth_cubit/auth_cubit.dart';
+
 import 'package:yap/Widgets/Custom_button.dart';
 import 'package:yap/Widgets/Custom_text_field.dart';
 import 'package:yap/helper/consts.dart';
@@ -30,7 +31,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<AuthCubit, AuthState>(
+    return BlocConsumer<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is RegisterLoading) {
           isLoading = true;
@@ -122,8 +123,9 @@ class _RegisterPageState extends State<RegisterPage> {
                     CustomButton(
                       onTap: () async {
                         if (formKey.currentState!.validate()) {
-                          BlocProvider.of<AuthCubit>(context)
-                              .registerUser(email: Email!, password: Password!);
+                          BlocProvider.of<AuthBloc>(context).add(
+                            RegisterEvent(email: Email!, password: Password!),
+                          );
                         }
                       },
                       txt: 'Sign up',
