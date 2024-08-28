@@ -1,19 +1,16 @@
-import 'dart:developer';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:yap/Views/RegisterPage.dart';
 import 'package:yap/Views/chat_page.dart';
+import 'package:yap/Views/cubits/auth_cubit/auth_cubit.dart';
 import 'package:yap/Views/cubits/chat_cubit/chat_cubit.dart';
-import 'package:yap/Views/cubits/login_cubit/login_cubit.dart';
 import 'package:yap/Widgets/Custom_text_field.dart';
 import 'package:yap/Widgets/Custom_button.dart';
 import 'package:yap/Widgets/Google_button.dart';
 import 'package:yap/helper/consts.dart';
 import 'package:yap/helper/show_snack_bar.dart';
 import 'package:yap/helper/success_snack_bar.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -34,7 +31,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<LoginCubit, LoginState>(
+    return BlocConsumer<AuthCubit, AuthState>(
       listener: (context, state) {
         if (state is LoginLoading) {
           isLoading = true;
@@ -125,7 +122,7 @@ class _LoginPageState extends State<LoginPage> {
                   CustomButton(
                     onTap: () async {
                       if (formKey.currentState!.validate()) {
-                        BlocProvider.of<LoginCubit>(context)
+                        BlocProvider.of<AuthCubit>(context)
                             .loginUser(email: Email!, password: Password!);
                       }
                     },
@@ -137,7 +134,7 @@ class _LoginPageState extends State<LoginPage> {
                   GoogleButton(
                     txt: 'Sign in with Google',
                     onTap: () async {
-                      BlocProvider.of<LoginCubit>(context).signInWithGoogle();
+                      BlocProvider.of<AuthCubit>(context).signInWithGoogle();
                     },
                   ),
                   const SizedBox(

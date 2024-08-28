@@ -3,10 +3,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:meta/meta.dart';
 
-part 'login_state.dart';
+part 'auth_state.dart';
 
-class LoginCubit extends Cubit<LoginState> {
-  LoginCubit() : super(LoginInitial());
+class AuthCubit extends Cubit<AuthState> {
+  AuthCubit() : super(AuthInitial());
 
   Future<void> loginUser(
       {required String email, required String password}) async {
@@ -43,6 +43,25 @@ class LoginCubit extends Cubit<LoginState> {
       emit(LoginSuccess());
     } catch (e) {
       emit(LoginFailure(errMessage: e.toString()));
+    }
+  }
+
+  Future<void> registerUser(
+      {required String email, required String password}) async {
+    emit(RegisterLoading());
+    try {
+      var auth = FirebaseAuth.instance;
+      UserCredential user = await auth.createUserWithEmailAndPassword(
+          email: email, password: password);
+      emit(RegisterSuccess());
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'week-password') {
+        emit(RegisterFailure(errMessage: 'The password is week.'));
+      } else if (e.code == 'email-already-in-use') {
+        emit(RegisterFailure(errMessage: 'The account already exist'));
+      }
+    } catch (e) {
+      emit(RegisterFailure(errMessage: e.toString()));
     }
   }
 }
